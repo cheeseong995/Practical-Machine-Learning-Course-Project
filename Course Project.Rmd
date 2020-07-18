@@ -1,0 +1,85 @@
+---
+title: "Course Project"
+author: "Chee Seong"
+date: "July 16, 2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Course Project
+
+### Loading of Library
+```{r}
+# load all the necessary libraries
+library(caret)
+library(rpart)
+library(rpart.plot)
+library(RColorBrewer)
+library(rattle)
+library(randomForest)
+library(gbm)
+library(randomForest)
+```
+
+### Cleaning Data
+First, we begin to import the data and start cleaning the data.
+
+```{r }
+# Load the training and testing data.
+training_data <- read.csv("./pml-training.csv" )
+testing_data <- read.csv("./pml-testing.csv")
+dim(training_data)
+dim(testing_data)
+
+# Cleaning the Data
+trainData <- training_data[,colSums(is.na(training_data))==0]
+testing_data <- testing_data[,colSums(is.na(testing_data))==0]
+dim(trainData)
+dim(testing_data)
+
+# Removing the first seven variables as they have little impact
+# on the outcome classe
+trainData <- trainData[, -c(1:7)]
+testing_data <- testing_data[, -c(1:7)]
+dim(trainData)
+dim(testing_data)
+
+#Preparing the datasets for prediction
+set.seed(1234)
+inTrain <- createDataPartition(trainData$classe, p=0.7,list=FALSE)
+trainData <- trainData[inTrain,]
+testData<- trainData[-inTrain,]
+dim(trainData)
+dim(testData)
+
+# Removing near-zero-variance
+NZV <- nearZeroVar(trainData)
+trainData <- trainData[, -NZV]
+testData <- testData[,-NZV]
+dim(trainData)
+dim(testData)
+
+```
+
+### Modeling of Random Forest
+
+```{r}
+controlRF <- trainControl(method="cv", number=3, verboseIter=FALSE)
+model_rf <- train(classe ~ ., data=trainData, method="rf",trControl=controlRF)
+model_rf$finalModel
+predict_rf <- predict(model_rf, newdata=testData)
+
+```
+Using the confusion matrix, we see that it has high accuracy in predicting the testing set from the training data. We proceed to test for the validation testing data set. 
+
+
+### Final Modeling of the Test Variables
+```{r}
+predict_rf_real <- predict(model_rf,newdata=testing_data)
+predict_rf_real
+```
