@@ -1,7 +1,7 @@
 ## Practical-Machine-Learning-Course-Project
 
-This is a Course Assignment for the module Practical Machine Learning. 
-It is conducted by the Johns Hopkins University. 
+This is a Course Assignment for the module Practical Machine Learning.  
+It is conducted by the Johns Hopkins University.  
 I would recommend reading the markdown file.
 
 One thing that people regularly do is quantify how much of a particular activity they do, 
